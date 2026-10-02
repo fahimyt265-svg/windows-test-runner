@@ -1,0 +1,38 @@
+name: Windows Testing Environment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  windows-test:
+    runs-on: windows-2025
+
+    steps:
+      - name: Windows Information
+        shell: powershell
+        run: |
+          Write-Host "=== WINDOWS TEST ==="
+          Get-ComputerInfo |
+            Select-Object WindowsProductName, WindowsVersion, OsArchitecture
+
+      - name: Hardware Information
+        shell: powershell
+        run: |
+          Write-Host "=== CPU ==="
+          Get-CimInstance Win32_Processor |
+            Select-Object Name, NumberOfCores, NumberOfLogicalProcessors
+
+          Write-Host "=== RAM ==="
+          $ram = Get-CimInstance Win32_ComputerSystem
+          "{0:N2} GB" -f ($ram.TotalPhysicalMemory / 1GB)
+
+      - name: Network Information
+        shell: powershell
+        run: |
+          Get-NetIPConfiguration
+
+      - name: Test Complete
+        shell: powershell
+        run: |
+          Write-Host "Windows testing environment is working!"
+          Start-Sleep -Seconds 60
